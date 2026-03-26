@@ -1,0 +1,61 @@
+diff --git a/libavcodec/amfenc.h b/libavcodec/amfenc.h
+--- a/libavcodec/amfenc.h
++++ b/libavcodec/amfenc.h
+@@ -100,6 +100,9 @@ typedef struct AMFEncoderContext {
+     enum AMF_VIDEO_ENCODER_AV1_ALIGNMENT_MODE_ENUM                 align;
+     enum AMF_VIDEO_ENCODER_AV1_AQ_MODE_ENUM                        aq_mode;
+
++    // Multi-VCN split-frame encoding
++    int                 multi_hw_instance;
++
+     // Preanalysis - specific options
+
+     int                 preanalysis;
+diff --git a/libavcodec/amfenc_hevc.c b/libavcodec/amfenc_hevc.c
+--- a/libavcodec/amfenc_hevc.c
++++ b/libavcodec/amfenc_hevc.c
+@@ -119,6 +119,8 @@ static const AVOption options[] = {
+
+     { "smart_access_video",     "Enable Smart Access Video to enhance  performance by utilizing both APU and dGPU memory access",        OFFSET(smart_access_video), AV_OPT_TYPE_BOOL, {.i64 = -1  }, -1, 1, VE},
+
++    { "multi_hw_instance",      "Enable split-frame encoding across multiple VCN hardware instances",   OFFSET(multi_hw_instance),   AV_OPT_TYPE_BOOL, {.i64 = -1 }, -1, 1, VE },
++
+     //Pre Analysis options
+     { "preanalysis",                            "Enable preanalysis", OFFSET(preanalysis),                            AV_OPT_TYPE_BOOL,   {.i64 = -1 }, -1, 1, VE },
+
+@@ -246,6 +248,11 @@ static av_cold int amf_encode_init_hevc(AVCodecContext *avctx)
+         }
+     }
+
++    if (ctx->multi_hw_instance != -1) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_MULTI_HW_INSTANCE_ENCODE, ctx->multi_hw_instance != 0);
++        av_log(avctx, AV_LOG_INFO, "Multi-VCN split-frame encode: %s\n", ctx->multi_hw_instance ? "enabled" : "disabled");
++    }
++
+     // Pre-Pass, Pre-Analysis, Two-Pass
+     if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_HEVC_RATE_CONTROL_METHOD_CONSTANT_QP) {
+         AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_PREENCODE_ENABLE, 0);
+diff --git a/libavcodec/amfenc_av1.c b/libavcodec/amfenc_av1.c
+--- a/libavcodec/amfenc_av1.c
++++ b/libavcodec/amfenc_av1.c
+@@ -113,6 +113,8 @@ static const AVOption options[] = {
+
+     { "smart_access_video",     "Enable Smart Access Video to enhance  performance by utilizing both APU and dGPU memory access",                OFFSET(smart_access_video),             AV_OPT_TYPE_BOOL, {.i64 = -1  }, -1, 1, VE},
+
++    { "multi_hw_instance",      "Enable split-frame encoding across multiple VCN hardware instances",   OFFSET(multi_hw_instance),   AV_OPT_TYPE_BOOL, {.i64 = -1 }, -1, 1, VE },
++
+     //Pre Analysis options
+     { "preanalysis",                            "Enable preanalysis",                                           OFFSET(preanalysis),                            AV_OPT_TYPE_BOOL,   {.i64 = -1 }, -1, 1, VE },
+
+@@ -183,6 +185,11 @@ static av_cold int amf_encode_init_av1(AVCodecContext* avctx)
+         }
+     }
+
++    if (ctx->multi_hw_instance != -1) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_AV1_MULTI_HW_INSTANCE_ENCODE, ctx->multi_hw_instance != 0);
++        av_log(avctx, AV_LOG_INFO, "Multi-VCN split-frame encode: %s\n", ctx->multi_hw_instance ? "enabled" : "disabled");
++    }
++
+     // Pre-Pass, Pre-Analysis, Two-Pass
+     if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_AV1_RATE_CONTROL_METHOD_CONSTANT_QP) {
+         AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_AV1_RATE_CONTROL_PREENCODE, 0);
