@@ -46,6 +46,7 @@ jobs:
   build:
     name: ${{ matrix.build }} - ${{ matrix.name }}
     needs: release-setup
+    if: always() && !cancelled()
     permissions:
       contents: read
     runs-on: ${{ matrix.os }}
@@ -615,6 +616,7 @@ jobs:
 
   conclude:
     needs: build
+    if: always() && !cancelled()
     permissions: {}
     runs-on: ubuntu-latest
     steps:
