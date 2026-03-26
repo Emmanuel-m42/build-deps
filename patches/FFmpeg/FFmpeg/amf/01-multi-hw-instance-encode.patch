@@ -5,7 +5,7 @@ diff --git a/libavcodec/amfenc.h b/libavcodec/amfenc.h
      enum AMF_VIDEO_ENCODER_AV1_ALIGNMENT_MODE_ENUM                 align;
      enum AMF_VIDEO_ENCODER_AV1_AQ_MODE_ENUM                        aq_mode;
 
-+    // Multi-VCN split-frame encoding
++    // Multi-VCN split-frame encoding (dual VCN instances)
 +    int                 multi_hw_instance;
 +
      // Preanalysis - specific options
