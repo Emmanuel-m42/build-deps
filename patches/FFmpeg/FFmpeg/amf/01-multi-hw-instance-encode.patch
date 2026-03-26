@@ -1,4 +1,7 @@
+Add multi-VCN split-frame encoding support to AMF HEVC and AV1 encoders
+
 diff --git a/libavcodec/amfenc.h b/libavcodec/amfenc.h
+index 1111111..2222222 100644
 --- a/libavcodec/amfenc.h
 +++ b/libavcodec/amfenc.h
 @@ -100,6 +100,9 @@ typedef struct AMFEncoderContext {
@@ -12,6 +15,7 @@ diff --git a/libavcodec/amfenc.h b/libavcodec/amfenc.h
 
      int                 preanalysis;
 diff --git a/libavcodec/amfenc_hevc.c b/libavcodec/amfenc_hevc.c
+index 3333333..4444444 100644
 --- a/libavcodec/amfenc_hevc.c
 +++ b/libavcodec/amfenc_hevc.c
 @@ -119,6 +119,8 @@ static const AVOption options[] = {
@@ -36,6 +40,7 @@ diff --git a/libavcodec/amfenc_hevc.c b/libavcodec/amfenc_hevc.c
      if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_HEVC_RATE_CONTROL_METHOD_CONSTANT_QP) {
          AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_PREENCODE_ENABLE, 0);
 diff --git a/libavcodec/amfenc_av1.c b/libavcodec/amfenc_av1.c
+index 5555555..6666666 100644
 --- a/libavcodec/amfenc_av1.c
 +++ b/libavcodec/amfenc_av1.c
 @@ -113,6 +113,8 @@ static const AVOption options[] = {
